@@ -27,13 +27,10 @@ void badCharHeuristic(string str, int size,
 
 /* A pattern searching function that uses Bad
 Character Heuristic of Boyer Moore Algorithm */
-int search(string txt, string pat)
+void search(string txt, string pat, int* count)
 {
     int m = pat.size();
     int n = txt.size();
-
-    //Agregada por los integrantes del grupo
-    int patternCount = 0;
 
     int badchar[NO_OF_CHARS];
 
@@ -57,12 +54,10 @@ int search(string txt, string pat)
         shift, then index j will become -1 after
         the above loop */
         if (j < 0) {
-            //cout << "pattern occurs at shift = " << s                               
-            //     << endl;
-            patternCount++; // Contamos cuantas veces se encuentra el patron
-
-
-
+            //cout << "pattern occurs at shift = " << s
+                // << endl;
+            (*count)++; // Increment the count of occurrences
+            
             /* Shift the pattern so that the next
             character in text aligns with the last
             occurrence of it in pattern.
@@ -83,7 +78,6 @@ int search(string txt, string pat)
             character. */
             s += max(1, j - badchar[txt[s + j]]);
     }
-    return patternCount; // Retornamos el conteo de patrones encontrados
 }
 
 /* Driver code */
@@ -96,13 +90,22 @@ int main()
         cerr << "No se pudo abrir el archivo." << endl;
         return 1;
     }
-    stringstream buffer;
-    buffer << file.rdbuf();
-    string txt = buffer.str();
-
-    // Patrón a buscar
+    string s;
+    
     string pat = "This"; // Cambia esto por el patrón que desees
 
-    cout << search(txt, pat) << " times in the text." << endl;
+    int count = 0;
+
+    // Read each line of the file, store
+    // it in string s and print it to the
+    // standard output stream 
+    while (getline(file, s))
+    {
+        search(s, pat, &count);
+    }
+    
+    cout << "El patrón '" << pat << "' se encontró " << count << " veces en el archivo." << endl;
+
+    file.close();
     return 0;
 }
