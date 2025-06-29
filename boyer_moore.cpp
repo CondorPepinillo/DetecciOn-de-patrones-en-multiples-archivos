@@ -1,0 +1,108 @@
+//Implementacion de Boyer-Moore String Matching Algorithm de cortesia de GeeksforGeeks,
+//la cual implementaremos junto a nuestro main para que leea un archivo de texto (de nuestros datasets por ejemplo) y busque patrones en el mismo.
+//se alterara el codigo para en lugar de retornar los lugares en que encuentra el patron en su lugar imprima cuantas veces se encuentra el patron en el texto.
+
+/* C++ Program for Bad Character Heuristic of Boyer
+Moore String Matching Algorithm */
+#include <bits/stdc++.h>
+using namespace std;
+#define NO_OF_CHARS 256
+
+// The preprocessing function for Boyer Moore's
+// bad character heuristic
+void badCharHeuristic(string str, int size,
+                      int badchar[NO_OF_CHARS])
+{
+    int i;
+
+    // Initialize all occurrences as -1
+    for (i = 0; i < NO_OF_CHARS; i++)
+        badchar[i] = -1;
+
+    // Fill the actual value of last occurrence
+    // of a character
+    for (i = 0; i < size; i++)
+        badchar[(int)str[i]] = i;
+}
+
+/* A pattern searching function that uses Bad
+Character Heuristic of Boyer Moore Algorithm */
+int search(string txt, string pat)
+{
+    int m = pat.size();
+    int n = txt.size();
+
+    //Agregada por los integrantes del grupo
+    int patternCount = 0;
+
+    int badchar[NO_OF_CHARS];
+
+    /* Fill the bad character array by calling
+    the preprocessing function badCharHeuristic()
+    for given pattern */
+    badCharHeuristic(pat, m, badchar);
+
+    int s = 0; // s is shift of the pattern with
+               // respect to text
+    while (s <= (n - m)) {
+        int j = m - 1;
+
+        /* Keep reducing index j of pattern while
+        characters of pattern and text are
+        matching at this shift s */
+        while (j >= 0 && pat[j] == txt[s + j])
+            j--;
+
+        /* If the pattern is present at current
+        shift, then index j will become -1 after
+        the above loop */
+        if (j < 0) {
+            //cout << "pattern occurs at shift = " << s                               
+            //     << endl;
+            patternCount++; // Contamos cuantas veces se encuentra el patron
+
+
+
+            /* Shift the pattern so that the next
+            character in text aligns with the last
+            occurrence of it in pattern.
+            The condition s+m < n is necessary for
+            the case when pattern occurs at the end
+            of text */
+            s += (s + m < n) ? m - badchar[txt[s + m]] : 1;
+        }
+
+        else
+            /* Shift the pattern so that the bad character
+            in text aligns with the last occurrence of
+            it in pattern. The max function is used to
+            make sure that we get a positive shift.
+            We may get a negative shift if the last
+            occurrence of bad character in pattern
+            is on the right side of the current
+            character. */
+            s += max(1, j - badchar[txt[s + j]]);
+    }
+    return patternCount; // Retornamos el conteo de patrones encontrados
+}
+
+/* Driver code */
+int main()
+{
+    // ...existing code...
+    // Leer todo el archivo en un string
+    ifstream file("datasets/English/english_00"); // Cambia esto por el archivo que desees
+    if (!file.is_open()) {
+        cerr << "No se pudo abrir el archivo." << endl;
+        return 1;
+    }
+    stringstream buffer;
+    buffer << file.rdbuf();
+    string txt = buffer.str();
+
+    // Patrón a buscar
+    string pat = "This"; // Cambia esto por el patrón que desees
+
+    cout << search(txt, pat) << " times in the text." << endl;
+    return 0;
+}
