@@ -82,32 +82,3 @@ void search(string txt, string pat, int* count)
     }
 }
 
-/* Driver code */
-int main()
-{
-    // ...existing code...
-    // Leer todo el archivo en un string
-    ifstream file("datasets/English/english_00"); // Cambia esto por el archivo que desees
-    if (!file.is_open()) {
-        cerr << "No se pudo abrir el archivo." << endl;
-        return 1;
-    }
-    string s;
-    
-    string pat = "This"; // Cambia esto por el patrón que desees
-
-    int count = 0;
-
-    // Read each line of the file, store
-    // it in string s and print it to the
-    // standard output stream 
-    while (getline(file, s))
-    {
-        search(s, pat, &count);
-    }
-    
-    cout << "El patrón '" << pat << "' se encontró " << count << " veces en el archivo." << endl;
-
-    file.close();
-    return 0;
-}

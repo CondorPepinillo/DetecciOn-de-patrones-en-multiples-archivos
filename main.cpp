@@ -4,12 +4,12 @@ using namespace std;
 #include <sstream>
 #include <string>
 
-#include <boyer_moore.cpp>
+#include "boyer_moore.h"
+
 
 
 int main()
 {
-    
     ifstream file("datasets/English/english_00");
     if (!file.is_open()) {
         cerr << "No se pudo abrir el archivo." << endl;
