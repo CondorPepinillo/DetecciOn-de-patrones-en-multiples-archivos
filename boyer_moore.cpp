@@ -12,15 +12,12 @@ using namespace std;
 
 // The preprocessing function for Boyer Moore's
 // bad character heuristic
-void badCharHeuristic(string str, int size,
-                      int badchar[NO_OF_CHARS])
+void badCharHeuristic(string str, int size, int badchar[NO_OF_CHARS])
 {
     int i;
-
     // Initialize all occurrences as -1
     for (i = 0; i < NO_OF_CHARS; i++)
         badchar[i] = -1;
-
     // Fill the actual value of last occurrence
     // of a character
     for (i = 0; i < size; i++)
