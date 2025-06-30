@@ -5,32 +5,17 @@ using namespace std;
 #include <string>
 
 #include "boyer_moore.h"
+#include "toString.h"
 
-
-
-int main()
+int main(int argc, char* argv[])
 {
-    ifstream file("datasets/English/english_00");
-    if (!file.is_open()) {
-        cerr << "No se pudo abrir el archivo." << endl;
-        return 1;
-    }
-    stringstream buffer;
-    buffer << file.rdbuf();
-    string txt = buffer.str();
-
-    // Patrón a buscar
-    string pat = "This"; // Cambia esto por el patrón que desees
-
-    int count = 0;
-
-    while(getline(file, txt))
-    {
-        search(txt, pat, &count);
+    if (argc < 2) {
+    cerr << "Uso: " << argv[0] << " <archivo1> [archivo2] ...\n";
+    return 0;
     }
 
-    cout << "El patrón '" << pat << "' se encontró " << count << " veces en el archivo." << endl;
+    string resultado = toString(argc - 1, &argv[1]);
 
-    file.close();
+    cout << "Texto combinado de los archivos:\n" << resultado << endl;
     return 0;
 }
