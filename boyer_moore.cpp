@@ -4,7 +4,9 @@
 
 /* C++ Program for Bad Character Heuristic of Boyer
 Moore String Matching Algorithm */
-#include <bits/stdc++.h>
+#include <iostream>
+#include <fstream>
+#include <sstream>
 using namespace std;
 #define NO_OF_CHARS 256
 
