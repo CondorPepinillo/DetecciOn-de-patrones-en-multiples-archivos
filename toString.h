@@ -3,4 +3,4 @@
 #include <iostream>
 using namespace std;
 
-string toString(int argc, char* argv[]);
+string toString(int argc, char* argv[], string separator);

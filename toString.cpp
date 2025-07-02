@@ -5,7 +5,7 @@
 #include <sstream>
 using namespace std;
 
-string toString(int argc, char* argv[]) {
+string toString(int argc, char* argv[], string separator) {
     string text;
     for(int i=0; i<argc; i++) {
         ifstream file(argv[i]);
@@ -16,7 +16,7 @@ string toString(int argc, char* argv[]) {
 
         stringstream buffer;
         buffer << file.rdbuf();
-        text = text + buffer.str() + "$";
+        text = text + buffer.str() + separator;
 
     }
     return text;
