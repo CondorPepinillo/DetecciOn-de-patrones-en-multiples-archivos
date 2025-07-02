@@ -92,13 +92,13 @@ vector<int> search(string &pat, string &txt) {
 
 int main()
 {
-    ifstream file("datasets/English/english_01");
+    ifstream file("datasets/English/english_00");
     if (!file.is_open()) {
         cerr << "No se pudo abrir el archivo." << endl;
         return 1;
     }
 
-    string pat = "this"; // patrón a buscar
+    string pat = "This"; // patrón a buscar
     string s;
     int count = 0;
 
