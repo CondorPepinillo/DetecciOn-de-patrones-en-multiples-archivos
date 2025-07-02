@@ -19,19 +19,19 @@ int main(int argc, char* argv[])
     //Con nuestro función toString tomamos todos los textos de los archivos y los concatenamos en un solo string, podemos escoger el separador que queramos
     string separador ="$";
     string textoDondeBuscar = toString(argc - 1, &argv[1], separador);
-    string patron;
+    string patron = "the";
 
     ///////////////////////////////////////////
     ////Algoritmicas
     //Rabin-Karp
     int rabinCount = 0;
     RabinKarp Rabin = RabinKarp();
-    Rabin.search(textoDondeBuscar, "the", &rabinCount);
+    Rabin.search(textoDondeBuscar, patron, &rabinCount);
 
     //Boyer-Moore
     int boyerCount = 0;
     BoyerMoore boyer = BoyerMoore();
-    boyer.search(textoDondeBuscar, "the", &boyerCount);
+    boyer.search(textoDondeBuscar, patron, &boyerCount);
 
 
     return 0;
