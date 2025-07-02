@@ -31,19 +31,17 @@ public:
         //vector<int> ans;  se le utiliza para almacenar los indices de las ocurrencias del patron en el texto, pero en este caso no se usa ya que solo se cuenta las ocurrencias.
         
         // Precompute h = pow(d, M-1) % q
-        for (int i = 0; i < M - 1; i++)
+        for (int i = 0; i < M - 1; i++){
             h = (h * d) % q;
-
+        }
         // Compute initial hash values for pattern and first window of text
         for (int i = 0; i < M; i++){
-            
             p = (d * p + pat[i]) % q;
             t = (d * t + txt[i]) % q;
         }
 
         // Slide the pattern over text one by one
         for (int i = 0; i <= N - M; i++){
-            
             // If hash values match, check characters one by one
             if (p == t){
                 bool match = true;
