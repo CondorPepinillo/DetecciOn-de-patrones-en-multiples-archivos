@@ -3,9 +3,10 @@ using namespace std;
 #include <fstream>
 #include <sstream>
 #include <string>
+#include "toString.cpp"
+#include "boyer_moore.cpp"
+#include "rabin_karp.c++"
 
-#include "boyer_moore.h"
-#include "toString.h"
 
 int main(int argc, char* argv[])
 {
@@ -20,7 +21,18 @@ int main(int argc, char* argv[])
     string textoDondeBuscar = toString(argc - 1, &argv[1], separador);
     string patron;
 
+    ///////////////////////////////////////////
+    ////Algoritmicas
+    //Rabin-Karp
+    int rabinCount = 0;
+    RabinKarp Rabin = RabinKarp();
+    Rabin.search(textoDondeBuscar, "the", &rabinCount);
+
+    //Boyer-Moore
+    int boyerCount = 0;
+    BoyerMoore boyer = BoyerMoore();
+    boyer.search(textoDondeBuscar, "the", &boyerCount);
+
+
     return 0;
-
-
 }

@@ -3,7 +3,6 @@
 //Implementacion de Rabin-Karp de cortesia de GeeksforGeeks,
 //la cual implementaremos junto a nuestro main para que leea un archivo de texto (de nuestros datasets por ejemplo) y busque patrones en el mismo.
 //se alterara el codigo para en lugar de retornar los lugares en que encuentra el patron en su lugar imprima cuantas veces se encuentra el patron en el texto.
-
 #include <iostream>
 #include <vector>
 #include <fstream>
@@ -12,7 +11,6 @@ using namespace std;
 
 class RabinKarp {
 public:
-// Function to search for all occurrences of 'pat' in 'txt' using Rabin-Karp
     void search(const string &txt, const string &pat, int *count) {
         
         // Number of characters in the input alphabet (ASCII)
@@ -77,8 +75,6 @@ public:
 };
 
 int main(){
-    // ...existing code...
-    // Leer todo el archivo en un string
     ifstream file("datasets/English/english_00"); // Cambia esto por el archivo que desees
     if (!file.is_open()) {
         cerr << "No se pudo abrir el archivo." << endl;
