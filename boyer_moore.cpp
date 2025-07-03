@@ -8,6 +8,7 @@ Moore String Matching Algorithm */
 #include <fstream>
 #include <sstream>
 #include <chrono>
+#include <vector>
 using namespace std;
 #define NO_OF_CHARS 256
 #include "toString.cpp"
@@ -97,7 +98,7 @@ int main(int argc, char* argv[])
 
     string separador ="$";
     string textoDondeBuscar = toString(argc - 1, &argv[1], separador);
-    string patron = "This";
+    cout << "Texto concatenado tiene " << textoDondeBuscar.size() << " caracteres." << endl;
 
     int count = 0;
 
@@ -105,15 +106,21 @@ int main(int argc, char* argv[])
     // it in string s and print it to the
     // standard output stream 
 
+    vector<string> patrones = {"This", "Days", "etext"};
+
     BoyerMoore bm;
 
-    auto start = chrono::high_resolution_clock::now();
-    bm.search(textoDondeBuscar, patron, &count);
-    auto end = chrono::high_resolution_clock::now();
-
-    double running_time = chrono::duration<double>(end - start).count();
-
-    cout << "El patrón '" << patron << "' se encontró " << count << " veces en el archivo, en: "<<running_time<<"segundos." << endl;
+    cout << "Buscando patrones..." << endl;
+    for (const auto& patron : patrones) {
+        int ocurrencias = 0;
+        auto start = chrono::high_resolution_clock::now();
+        bm.search(textoDondeBuscar, patron, &ocurrencias);
+        auto end = chrono::high_resolution_clock::now();
+        double running_time = chrono::duration<double>(end - start).count();
+        cout << "Terminado: " << patron << endl;
+        cout << "El patron \"" << patron << "\" se encuentra " << ocurrencias
+            << " veces (en " << running_time << " segundos)" << endl;
+    }
 
     return 0;
 }
