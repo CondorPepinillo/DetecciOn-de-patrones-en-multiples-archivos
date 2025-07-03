@@ -10,6 +10,7 @@ Moore String Matching Algorithm */
 #include <chrono>
 using namespace std;
 #define NO_OF_CHARS 256
+#include "toString.cpp"
 class BoyerMoore
 {
 public:
@@ -86,18 +87,17 @@ public:
     }
 };
 /* Driver code */
-int main()
+int main(int argc, char* argv[])
 {
-    // ...existing code...
-    // Leer todo el archivo en un string
-    ifstream file("datasets/English/english_00"); // Cambia esto por el archivo que desees
-    if (!file.is_open()) {
-        cerr << "No se pudo abrir el archivo." << endl;
-        return 1;
-    }
-    string s;
     
-    string pat = "This"; // Cambia esto por el patrón que desees
+    if (argc < 2) {
+    cerr << "Uso: " << argv[0] << " <archivo1> [archivo2] ...\n";
+    return 0;
+    }
+
+    string separador ="$";
+    string textoDondeBuscar = toString(argc - 1, &argv[1], separador);
+    string patron = "This";
 
     int count = 0;
 
@@ -108,16 +108,12 @@ int main()
     BoyerMoore bm;
 
     auto start = chrono::high_resolution_clock::now();
-    while (getline(file, s))
-    {
-        bm.search(s, pat, &count);
-    }
+    bm.search(textoDondeBuscar, patron, &count);
     auto end = chrono::high_resolution_clock::now();
 
     double running_time = chrono::duration<double>(end - start).count();
 
-    cout << "El patrón '" << pat << "' se encontró " << count << " veces en el archivo, en: "<<running_time<<"segundos." << endl;
+    cout << "El patrón '" << patron << "' se encontró " << count << " veces en el archivo, en: "<<running_time<<"segundos." << endl;
 
-    file.close();
     return 0;
 }
