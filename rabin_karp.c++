@@ -7,6 +7,7 @@
 #include <vector>
 #include <fstream>
 #include <sstream>
+#include <chrono>
 using namespace std;
 
 class RabinKarp {
@@ -90,12 +91,16 @@ int main(){
 
     RabinKarp rk;
 
+    auto start = chrono::high_resolution_clock::now();
     while (getline(file, s))
     {
         rk.search(s, pat, &count);
     }
+    auto end = chrono::high_resolution_clock::now();
+
+    double running_time = chrono::duration<double>(end - start).count();
  
-    cout << "El patrón '" << pat << "' se encontró " << count << " veces en el archivo." << endl;
+    cout << "El patrón '" << pat << "' se encontró " << count << " veces en el archivo en: "<< running_time <<" segundos" << endl;
 
     file.close();
     return 0;

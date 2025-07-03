@@ -5,7 +5,7 @@
 #include <map>
 #include <fstream>
 #include <sstream>
-
+#include <chrono>
 using namespace std;
 
 // Construcción de la Burrows-Wheeler Transform
@@ -104,7 +104,7 @@ int countOccurrences(const string &pattern, const string &bwt,
 }
 
 int main() {
-    ifstream file("datasets/English/english_69");
+    ifstream file("datasets/English/english_00");
     if (!file.is_open()) {
         cerr << "No se pudo abrir el archivo." << endl;
         return 1;
@@ -122,10 +122,15 @@ int main() {
     map<char, int> C = buildC(bwt);
     map<char, vector<int> > Occ = buildOcc(bwt);
 
-    string pattern="this";
+    string pattern="This";
 
+    auto start = chrono::high_resolution_clock::now();
     int count = countOccurrences(pattern, bwt, C, Occ);
-    cout << "El patrón \"" << pattern << "\" aparece " << count << " veces." << endl;
+    auto end = chrono::high_resolution_clock::now();
+
+    double running_time = chrono::duration<double>(end - start).count();
+
+    cout << "El patrón \"" << pattern << "\" aparece " << count << " veces, en: "<<running_time<<"segundos." << endl;
 
     return 0;
 }

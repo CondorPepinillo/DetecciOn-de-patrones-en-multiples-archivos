@@ -5,6 +5,7 @@
 #include <fstream>
 #include <sstream>
 #include <vector>
+#include <chrono>
 using namespace std;
 
 void constructLps(string &pat, vector<int> &lps) {
@@ -102,12 +103,16 @@ int main()
     string s;
     int count = 0;
 
+    auto start = chrono::high_resolution_clock::now();
     while (getline(file, s)) {
         vector<int> positions = search(pat, s);
         count += positions.size();  // suma cantidad de apariciones
     }
+    auto end = chrono::high_resolution_clock::now();
+    
+    double running_time = chrono::duration<double>(end - start).count();
 
-    cout << "El patrón '" << pat << "' se encontró " << count << " veces en el archivo." << endl;
+    cout << "El patrón '" << pat << "' se encontró " << count << " veces en el archivo, en: "<<running_time<<"segundos." << endl;
     file.close();
     return 0;
 }

@@ -7,6 +7,7 @@ Moore String Matching Algorithm */
 #include <iostream>
 #include <fstream>
 #include <sstream>
+#include <chrono>
 using namespace std;
 #define NO_OF_CHARS 256
 class BoyerMoore
@@ -106,12 +107,16 @@ int main()
 
     BoyerMoore bm;
 
+    auto start = chrono::high_resolution_clock::now();
     while (getline(file, s))
     {
         bm.search(s, pat, &count);
     }
- 
-    cout << "El patrón '" << pat << "' se encontró " << count << " veces en el archivo." << endl;
+    auto end = chrono::high_resolution_clock::now();
+
+    double running_time = chrono::duration<double>(end - start).count();
+
+    cout << "El patrón '" << pat << "' se encontró " << count << " veces en el archivo, en: "<<running_time<<"segundos." << endl;
 
     file.close();
     return 0;

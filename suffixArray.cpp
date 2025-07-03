@@ -5,6 +5,7 @@
 #include <algorithm>
 #include <fstream>
 #include <sstream>
+#include <chrono>
 using namespace std;
 
 vector<int> buildSufArr(string &s) {
@@ -72,9 +73,13 @@ int main() {
 
     string pat = "This";
 
-
+    auto start = chrono::high_resolution_clock::now();
     int count = countPatternOccurrences(s, sufArr, pat);
-    cout << "El patron \"" << pat << "\" aparece " << count << " veces en el texto." << endl;
+    auto end = chrono::high_resolution_clock::now();
+
+    double running_time = chrono::duration<double>(end - start).count();
+
+    cout << "El patron \"" << pat << "\" aparece " << count << " veces en el texto, en: "<<running_time<<" segundos." << endl;
 
     return 0;
 }
