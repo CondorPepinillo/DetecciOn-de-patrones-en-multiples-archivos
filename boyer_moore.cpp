@@ -106,7 +106,19 @@ int main(int argc, char* argv[])
     // it in string s and print it to the
     // standard output stream 
 
-    vector<string> patrones = {"This", "Days", "etext"};
+    string archivoPatrones = argv[argc - 1];
+    vector<string> patrones;
+    ifstream filePatrones(archivoPatrones);
+    if (!filePatrones.is_open()) {
+        cerr << "No se pudo abrir el archivo" << archivoPatrones << endl;
+        return 1;
+    }
+    string linea;
+    while (getline(filePatrones, linea)) {
+        if (!linea.empty())
+            patrones.push_back(linea);
+    }
+    filePatrones.close();
 
     BoyerMoore bm;
 
