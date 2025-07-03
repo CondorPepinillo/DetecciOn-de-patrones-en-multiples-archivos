@@ -8,6 +8,7 @@
 #include <fstream>
 #include <sstream>
 #include <chrono>
+#include "toString.cpp"
 using namespace std;
 
 class RabinKarp {
@@ -73,15 +74,17 @@ public:
     }
 };
 
-int main(){
-    ifstream file("datasets/English/english_00"); // Cambia esto por el archivo que desees
-    if (!file.is_open()) {
-        cerr << "No se pudo abrir el archivo." << endl;
-        return 1;
-    }
-    string s;
+int main(int argc, char* argv[])
+{
     
-    string pat = "This"; // Cambia esto por el patrón que desees
+    if (argc < 2) {
+    cerr << "Uso: " << argv[0] << " <archivo1> [archivo2] ...\n";
+    return 0;
+    }
+
+    string separador ="$";
+    string textoDondeBuscar = toString(argc - 1, &argv[1], separador);
+    string patron = "This";
 
     int count = 0;
 
@@ -89,19 +92,15 @@ int main(){
     // it in string s and print it to the
     // standard output stream 
 
-    RabinKarp rk;
+    RabinKarp rp;
 
     auto start = chrono::high_resolution_clock::now();
-    while (getline(file, s))
-    {
-        rk.search(s, pat, &count);
-    }
+    rp.search(textoDondeBuscar, patron, &count);
     auto end = chrono::high_resolution_clock::now();
 
     double running_time = chrono::duration<double>(end - start).count();
- 
-    cout << "El patrón '" << pat << "' se encontró " << count << " veces en el archivo en: "<< running_time <<" segundos" << endl;
 
-    file.close();
+    cout << "El patrón '" << patron << "' se encontró " << count << " veces en el archivo, en: "<<running_time<<"segundos." << endl;
+
     return 0;
 }
