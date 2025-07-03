@@ -103,34 +103,42 @@ int countOccurrences(const string &pattern, const string &bwt,
     return r - l;
 }
 
-int main() {
-    ifstream file("datasets/English/english_00");
-    if (!file.is_open()) {
-        cerr << "No se pudo abrir el archivo." << endl;
-        return 1;
+int main(int argc, char* argv[]) {
+    if (argc < 2) {
+        cerr << "Uso: " << argv[0] << " <archivo1> [archivo2] ...\n";
+        return 0;
     }
 
+    // Concatenar el contenido de todos los archivos
     stringstream buffer;
-    buffer << file.rdbuf();
-    string text = buffer.str();
+    for (int i = 1; i < argc; ++i) {
+        ifstream file(argv[i]);
+        if (!file.is_open()) {
+            cerr << "No se pudo abrir el archivo: " << argv[i] << endl;
+            return 1;
+        }
+        buffer << file.rdbuf();
+        file.close();
+    }
+    string s = buffer.str();
 
-    if (text.back() != '$') text += "$"; // símbolo terminador
-
-    vector<int> suffixArray;
-    string bwt = buildBWT(text, suffixArray);
-
-    map<char, int> C = buildC(bwt);
-    map<char, vector<int> > Occ = buildOcc(bwt);
-
-    string pattern="This";
+    string pat = "This";
 
     auto start = chrono::high_resolution_clock::now();
-    int count = countOccurrences(pattern, bwt, C, Occ);
-    auto end = chrono::high_resolution_clock::now();
 
+    // Construir BWT y tablas auxiliares
+    vector<int> suffixArray;
+    string bwt = buildBWT(s, suffixArray);
+    map<char, int> C = buildC(bwt);
+    map<char, vector<int>> Occ = buildOcc(bwt);
+
+    // Buscar el patrón usando FM-Index
+    int count = countOccurrences(pat, bwt, C, Occ);
+
+    auto end = chrono::high_resolution_clock::now();
     double running_time = chrono::duration<double>(end - start).count();
 
-    cout << "El patrón \"" << pattern << "\" aparece " << count << " veces, en: "<<running_time<<"segundos." << endl;
+    cout << "El patron \"" << pat << "\" aparece " << count << " veces en el texto, en: " << running_time << " segundos." << endl;
 
     return 0;
 }

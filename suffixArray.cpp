@@ -7,6 +7,7 @@
 #include <sstream>
 #include <chrono>
 using namespace std;
+#include "toString.cpp"
 
 vector<int> buildSufArr(string &s) {
     int n = s.length();
@@ -60,14 +61,23 @@ int countPatternOccurrences(const string &text, const vector<int> &sufArr, const
     return upper - lower;
 }
 
-int main() {
-    ifstream file("datasets/English/english_00"); // Cambia esto por el archivo que desees
-    if (!file.is_open()) {
-        cerr << "No se pudo abrir el archivo." << endl;
-        return 1;
+int main(int argc, char* argv[]) {
+    if (argc < 2) {
+        cerr << "Uso: " << argv[0] << " <archivo1> [archivo2] ...\n";
+        return 0;
     }
+
+    // Concatenar el contenido de todos los archivos
     stringstream buffer;
-    buffer << file.rdbuf(); // Lee todo el contenido del archivo
+    for (int i = 1; i < argc; ++i) {
+        ifstream file(argv[i]);
+        if (!file.is_open()) {
+            cerr << "No se pudo abrir el archivo: " << argv[i] << endl;
+            return 1;
+        }
+        buffer << file.rdbuf();
+        file.close();
+    }
     string s = buffer.str();
     vector<int> sufArr = buildSufArr(s);
 
@@ -79,7 +89,7 @@ int main() {
 
     double running_time = chrono::duration<double>(end - start).count();
 
-    cout << "El patron \"" << pat << "\" aparece " << count << " veces en el texto, en: "<<running_time<<" segundos." << endl;
+    cout << "El patron \"" << pat << "\" aparece " << count << " veces en el texto, en: " << running_time << " segundos." << endl;
 
     return 0;
 }
