@@ -7,6 +7,8 @@
 #include <vector>
 #include <chrono>
 using namespace std;
+#define NO_OF_CHARS 256
+#include "toString.cpp"
 
 void constructLps(string &pat, vector<int> &lps) {
 
@@ -45,14 +47,14 @@ void constructLps(string &pat, vector<int> &lps) {
     }
 }
 
-vector<int> search(string &pat, string &txt) {
+vector<int> search(const string &pat, string &txt) {
     int n = txt.length();
     int m = pat.length();
 
     vector<int> lps(m);
     vector<int> res;
 
-    constructLps(pat, lps);
+    constructLps(const_cast<string&>(pat), lps);
 
     // Pointers i and j, for traversing
     // the text and pattern
@@ -91,28 +93,27 @@ vector<int> search(string &pat, string &txt) {
     return res;
 }
 
-int main()
+int main(int argc, char* argv[])
 {
-    ifstream file("datasets/English/english_00");
-    if (!file.is_open()) {
-        cerr << "No se pudo abrir el archivo." << endl;
-        return 1;
+    if (argc < 2) {
+    cerr << "Uso: " << argv[0] << " <archivo1> [archivo2] ...\n";
+    return 0;
     }
 
-    string pat = "This"; // patrón a buscar
-    string s;
+    string separador ="$";
+    string textoDondeBuscar = toString(argc - 1, &argv[1], separador);
+    string patron = "This";
+
     int count = 0;
 
     auto start = chrono::high_resolution_clock::now();
-    while (getline(file, s)) {
-        vector<int> positions = search(pat, s);
-        count += positions.size();  // suma cantidad de apariciones
-    }
+    vector<int> positions = search(patron, textoDondeBuscar);
+    count += positions.size();  // suma cantidad de apariciones
     auto end = chrono::high_resolution_clock::now();
-    
     double running_time = chrono::duration<double>(end - start).count();
 
-    cout << "El patrón '" << pat << "' se encontró " << count << " veces en el archivo, en: "<<running_time<<"segundos." << endl;
-    file.close();
+    cout << "El patrón '" << patron << "' se encontró " << count << " veces en el archivo, en: "<<running_time<<"segundos." << endl;
+
     return 0;
+
 }
