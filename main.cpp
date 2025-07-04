@@ -5,7 +5,7 @@ using namespace std;
 #include <string>
 #include "toString.cpp"
 #include "boyer_moore.cpp"
-#include "rabin_karp.c++"
+#include "rabin_karp.cpp"
 
 
 int main(int argc, char* argv[])
@@ -27,7 +27,6 @@ int main(int argc, char* argv[])
     int rabinCount = 0;
     RabinKarp Rabin = RabinKarp();
     Rabin.search(textoDondeBuscar, patron, &rabinCount);
-
     //Boyer-Moore
     int boyerCount = 0;
     BoyerMoore boyer = BoyerMoore();
