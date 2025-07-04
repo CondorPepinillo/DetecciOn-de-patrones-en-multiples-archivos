@@ -135,5 +135,6 @@ int main(int argc, char* argv[])
             << " veces (en " << running_time << " segundos)" << endl;
     }
 
+    cout << textoDondeBuscar << endl;
     return 0;
 }
