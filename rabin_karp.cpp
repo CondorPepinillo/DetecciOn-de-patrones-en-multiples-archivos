@@ -86,7 +86,7 @@ int main(int argc, char* argv[])
     string textoDondeBuscar = toString(argc - 1, &argv[1], separador);
     string patron = "This";
 
-    int count = 0;
+    int count = -1;
 
     // Read each line of the file, store
     // it in string s and print it to the

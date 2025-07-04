@@ -124,9 +124,10 @@ int main(int argc, char* argv[])
 
     cout << "Buscando patrones..." << endl;
     for (const auto& patron : patrones) {
-        int ocurrencias = 0;
+        int ocurrencias = -1;
         auto start = chrono::high_resolution_clock::now();
         bm.search(textoDondeBuscar, patron, &ocurrencias);
+        
         auto end = chrono::high_resolution_clock::now();
         double running_time = chrono::duration<double>(end - start).count();
         cout << "Terminado: " << patron << endl;

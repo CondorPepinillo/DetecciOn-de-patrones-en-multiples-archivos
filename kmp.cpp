@@ -104,7 +104,7 @@ int main(int argc, char* argv[])
     string textoDondeBuscar = toString(argc - 1, &argv[1], separador);
     string patron = "This";
 
-    int count = 0;
+    int count = -1;
 
     auto start = chrono::high_resolution_clock::now();
     vector<int> positions = search(patron, textoDondeBuscar);
