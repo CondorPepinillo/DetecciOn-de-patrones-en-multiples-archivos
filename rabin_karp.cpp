@@ -9,68 +9,71 @@
 #include <sstream>
 #include <chrono>
 #include "toString.cpp"
+#include <map>
 using namespace std;
 
 class RabinKarp {
 public:
-    void search(const string &txt, const string &pat, int *count) {
-        
-        // Number of characters in the input alphabet (ASCII)
-        int d = 256;
-        // A prime number for modulo operations to reduce collisions
-        int q = 101;
-        // Length of the pattern
+    map<int, int> search(const string &txt, const string &pat,map<int, int>& section_counts, char separator = '\x7F') {
+        int d = 256;  // Number of characters in input alphabet
+        int q = 101;  // A prime number for hashing
         int M = pat.length();
-        // Length of the text
         int N = txt.length();
-        // Hash value for pattern
-        int p = 0;
-        // Hash value for current window of text
-        int t = 0;
-        // High-order digit multiplier
-        int h = 1;
+        int p = 0;    // Hash value for pattern
+        int t = 0;    // Hash value for text window
+        int h = 1;    // High-order digit multiplier
+
+        // Map from position to section
+        int current_section = 1;
+        vector<int> position_to_section(N);
+        for (int i = 0; i < N-1; i++) {
+            if (txt[i] == separator) {
+                current_section++;
+            }
+            position_to_section[i] = current_section;
+        }
+
         
-        //vector<int> ans;  se le utiliza para almacenar los indices de las ocurrencias del patron en el texto, pero en este caso no se usa ya que solo se cuenta las ocurrencias.
-        
+        for (int sec = 1; sec <= current_section; sec++) {
+            section_counts[sec] = 0;
+        }
+
         // Precompute h = pow(d, M-1) % q
-        for (int i = 0; i < M - 1; i++){
+        for (int i = 0; i < M - 1; i++) {
             h = (h * d) % q;
         }
-        // Compute initial hash values for pattern and first window of text
-        for (int i = 0; i < M; i++){
+
+        // Initial hash values for pattern and first window
+        for (int i = 0; i < M; i++) {
             p = (d * p + pat[i]) % q;
             t = (d * t + txt[i]) % q;
         }
 
-        // Slide the pattern over text one by one
-        for (int i = 0; i <= N - M; i++){
-            // If hash values match, check characters one by one
-            if (p == t){
+        // Slide the pattern over text
+        for (int i = 0; i <= N - M; i++) {
+            if (p == t) {
                 bool match = true;
-                for (int j = 0; j < M; j++){
-                    
-                    if (txt[i + j] != pat[j]){
-                    
+                for (int j = 0; j < M; j++) {
+                    if (txt[i + j] != pat[j]) {
                         match = false;
                         break;
                     }
                 }
-                if (match){
-                    //ans.push_back(i + 1);
-                    (*count)++; // Increment the count of occurrences
+                if (match) {
+                    int section = position_to_section[i];
+                    section_counts[section]++; // Increment count for this section
                 }
             }
 
-            // Calculate hash value for the next window
-            if (i < N - M){
-                
+            // Compute hash for next window
+            if (i < N - M) {
                 t = (d * (t - txt[i] * h) + txt[i + M]) % q;
-
-                // Ensure hash value is non-negative
                 if (t < 0)
-                    t += q;
+                    t += q; // Ensure non-negative
             }
         }
+
+        return section_counts;
     }
 };
 
@@ -82,25 +85,41 @@ int main(int argc, char* argv[])
     return 0;
     }
 
-    string separador ="$";
+    string separador ="\x7F";
     string textoDondeBuscar = toString(argc - 1, &argv[1], separador);
-    string patron = "This";
+    cout << "Texto concatenado tiene " << textoDondeBuscar.size() << " caracteres." << endl;
 
-    int count = -1;
+    int count = 0;
 
-    // Read each line of the file, store
-    // it in string s and print it to the
-    // standard output stream 
+    string archivoPatrones = argv[argc - 1];
+    vector<string> patrones;
+    ifstream filePatrones(archivoPatrones);
+    if (!filePatrones.is_open()) {
+        cerr << "No se pudo abrir el archivo" << archivoPatrones << endl;
+        return 1;
+    }
+    string linea;
+    while (getline(filePatrones, linea)) {
+        if (!linea.empty())
+            patrones.push_back(linea);
+    }
+    filePatrones.close();
 
     RabinKarp rp;
 
-    auto start = chrono::high_resolution_clock::now();
-    rp.search(textoDondeBuscar, patron, &count);
-    auto end = chrono::high_resolution_clock::now();
+    cout << "Buscando patrones usando Rabin-Karp..." << endl;
+    for (const auto& patron :patrones){
+        map<int, int> section_counts;
 
-    double running_time = chrono::duration<double>(end - start).count();
+        auto start = chrono::high_resolution_clock::now();
+        rp.search(textoDondeBuscar, patron, section_counts);
+        auto end = chrono::high_resolution_clock::now();
 
-    cout << "El patrón '" << patron << "' se encontró " << count << " veces en el archivo, en: "<<running_time<<"segundos." << endl;
+        double running_time = chrono::duration<double>(end - start).count();
+        for (const auto& pair : section_counts) {
+            cout << "Texto " << pair.first << ". Patron: " << patron << ": " << pair.second << " occurrence(s) en " << running_time << " segundos." << endl;
+        }
+    }
 
     return 0;
 }

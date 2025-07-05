@@ -70,7 +70,8 @@ void search(string txt, string pat, map<int, int>& section_counts) {
     }
 }
 };
-/* Driver code */
+
+
 int main(int argc, char* argv[])
 {
     if (argc < 2) {
