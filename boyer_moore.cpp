@@ -73,7 +73,6 @@ void search(string txt, string pat, map<int, int>& section_counts) {
 /* Driver code */
 int main(int argc, char* argv[])
 {
-    
     if (argc < 2) {
     cerr << "Uso: " << argv[0] << " <archivo1> [archivo2] ...\n";
     return 0;
@@ -84,10 +83,6 @@ int main(int argc, char* argv[])
     cout << "Texto concatenado tiene " << textoDondeBuscar.size() << " caracteres." << endl;
 
     int count = 0;
-
-    // Read each line of the file, store
-    // it in string s and print it to the
-    // standard output stream 
 
     //Almacenar patrones a buscar en un vector
     string archivoPatrones = argv[argc - 1];
