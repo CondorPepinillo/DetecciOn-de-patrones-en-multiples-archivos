@@ -16,7 +16,7 @@ string toString(int argc, char* argv[], string separator) {
 
         stringstream buffer;
         buffer << file.rdbuf();
-        text = text + buffer.str() + separator;
+        text = text + buffer.str()+separator;
 
     }
     return text;
