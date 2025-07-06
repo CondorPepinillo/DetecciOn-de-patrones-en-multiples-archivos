@@ -26,11 +26,11 @@ int main(int argc, char* argv[])
     //Rabin-Karp
     int rabinCount = 0;
     RabinKarp Rabin = RabinKarp();
-    Rabin.search(textoDondeBuscar, patron, &rabinCount);
+    Rabin.search(textoDondeBuscar, patron);
     //Boyer-Moore
     int boyerCount = 0;
     BoyerMoore boyer = BoyerMoore();
-    boyer.search(textoDondeBuscar, patron, &boyerCount);
+    boyer.search(textoDondeBuscar, patron);
 
 
     return 0;

@@ -13,6 +13,7 @@ Moore String Matching Algorithm */
 using namespace std;
 #define NO_OF_CHARS 256
 #include "toString.cpp"
+#include "getName.cpp"
 class BoyerMoore
 {
 public:
@@ -104,6 +105,7 @@ int main(int argc, char* argv[])
     BoyerMoore bm;
 
     cout << "Buscando patrones..." << endl;
+
     for (const auto& patron : patrones) {
     
         map<int, int> section_counts;
@@ -113,10 +115,12 @@ int main(int argc, char* argv[])
         auto end = chrono::high_resolution_clock::now();
 
         
+        
         double running_time = chrono::duration<double>(end - start).count();
         for (const auto& pair : section_counts) {
-        cout << "Texto " << pair.first << ". Patron: "<<patron<< ": " << pair.second << " occurrence(s)" << "en" << running_time << "segundos."<< endl;
-    }
+            vector<string> parts = split(argv[pair.first], '/');
+            cout << "Texto " << parts.back() << ", Patron: "<<patron<< ": " << pair.second << " occurrence(s)" << "en " << running_time << "segundos."<< endl;
+        }
 
     }
 
