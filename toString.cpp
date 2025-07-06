@@ -5,9 +5,9 @@
 #include <sstream>
 using namespace std;
 
-string toString(int argc, char* argv[], string separator) {
+string toString(int argc, const char* argv[], string separator) {
     string text;
-    for(int i=0; i<argc-1; i++) {
+    for(int i=0; i<argc; i++) { // <-- corregido
         ifstream file(argv[i]);
         if (!file.is_open()) {
             cerr << "No se pudo abrir el archivo: " << argv[i] << endl;
@@ -16,8 +16,7 @@ string toString(int argc, char* argv[], string separator) {
 
         stringstream buffer;
         buffer << file.rdbuf();
-        text = text + buffer.str()+separator;
-
+        text = text + buffer.str() + separator;
     }
     return text;
 }

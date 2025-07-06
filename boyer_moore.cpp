@@ -2,8 +2,6 @@
 //la cual implementaremos junto a nuestro main para que leea un archivo de texto (de nuestros datasets por ejemplo) y busque patrones en el mismo.
 //se alterara el codigo para en lugar de retornar los lugares en que encuentra el patron en su lugar imprima cuantas veces se encuentra el patron en el texto.
 
-/* C++ Program for Bad Character Heuristic of Boyer
-Moore String Matching Algorithm */
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -14,6 +12,8 @@ using namespace std;
 #define NO_OF_CHARS 256
 #include "toString.cpp"
 #include "getName.cpp"
+#include <dirent.h>
+
 class BoyerMoore
 {
 public:
@@ -72,26 +72,55 @@ void search(string txt, string pat, map<int, int>& section_counts) {
 }
 };
 
-
 int main(int argc, char* argv[])
 {
-    if (argc < 2) {
-    cerr << "Uso: " << argv[0] << " <archivo1> [archivo2] ...\n";
-    return 0;
+    if (argc < 4) {
+        cerr << "Uso: " << argv[0] << " <carpeta> <n> <archivo_patrones>\n";
+        return 0;
     }
 
-    string separador ="\x7F";
-    string textoDondeBuscar = toString(argc - 1, &argv[1], separador);
+    string carpeta = argv[1];
+    int n = stoi(argv[2]);
+    string archivoPatrones = argv[3];
+    string separador = "\x7F";
+    vector<string> archivos;
+
+    // Leer solo los primeros n archivos de la carpeta usando dirent
+DIR* dir;
+struct dirent* ent;
+int count = 0;
+if ((dir = opendir(carpeta.c_str())) != NULL) {
+    while ((ent = readdir(dir)) != NULL) {
+        string nombre = ent->d_name;
+        if (nombre != "." && nombre != "..") {
+            string ruta = carpeta + "/" + nombre;
+            ifstream file(ruta);
+            if (file.is_open()) {
+                archivos.push_back(ruta);
+                count++;
+                if (count >= n) break;
+            }
+        }
+    }
+    closedir(dir);
+} else {
+    cerr << "No se pudo abrir la carpeta: " << carpeta << endl;
+    return 1;
+}
+
+    // Concatenar archivos usando toString
+    vector<const char*> archivos_cstr;
+    for (const auto& archivo : archivos) {
+        archivos_cstr.push_back(archivo.c_str());
+    }
+    string textoDondeBuscar = toString(archivos_cstr.size(), archivos_cstr.data(), separador);
     cout << "Texto concatenado tiene " << textoDondeBuscar.size() << " caracteres." << endl;
 
-    int count = 0;
-
     //Almacenar patrones a buscar en un vector
-    string archivoPatrones = argv[argc - 1];
     vector<string> patrones;
     ifstream filePatrones(archivoPatrones);
     if (!filePatrones.is_open()) {
-        cerr << "No se pudo abrir el archivo" << archivoPatrones << endl;
+        cerr << "No se pudo abrir el archivo " << archivoPatrones << endl;
         return 1;
     }
     string linea;
@@ -101,28 +130,20 @@ int main(int argc, char* argv[])
     }
     filePatrones.close();
 
-
     BoyerMoore bm;
-
     cout << "Buscando patrones..." << endl;
 
     for (const auto& patron : patrones) {
-    
         map<int, int> section_counts;
-        
         auto start = chrono::high_resolution_clock::now();
         bm.search(textoDondeBuscar, patron, section_counts);
         auto end = chrono::high_resolution_clock::now();
 
-        
-        
         double running_time = chrono::duration<double>(end - start).count();
         for (const auto& pair : section_counts) {
-            vector<string> parts = split(argv[pair.first], '/');
-            cout << "Texto " << parts.back() << ", Patron: "<<patron<< ": " << pair.second << " occurrence(s)" << "en " << running_time << "segundos."<< endl;
+            vector<string> parts = split(archivos[pair.first - 1], '/');
+            cout << "Texto " << parts.back() << ", Patron: " << patron << ": " << pair.second << " occurrence(s)" << " en " << running_time << " segundos." << endl;
         }
-
     }
-
     return 0;
 }
