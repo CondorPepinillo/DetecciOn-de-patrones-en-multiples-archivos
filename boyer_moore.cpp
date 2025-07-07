@@ -19,7 +19,6 @@ class BoyerMoore
 public:
     // The preprocessing function for Boyer Moore's
     // bad character heuristic
-    #define NO_OF_CHARS 256
 
 void badCharHeuristic(string str, int size, int badchar[NO_OF_CHARS]) {
     for (int i = 0; i < NO_OF_CHARS; i++)
@@ -161,6 +160,8 @@ if ((dir = opendir(carpeta.c_str())) != NULL) {
 
         // Validar índice antes de usarlo
         if (idx >= 0 && idx < archivos.size()) {
+            //podria ser necesario cambiar el separador dependiendo de la plataforma
+            //en windows es '\\' y en linux es '/'
             vector<string> parts = split(archivos[idx], '\\');
             cout << "Texto " << parts.back()<< ", Patron: " << patron<< ": " << pair.second<< " occurrence(s)"<< " en " << running_time << " segundos." << endl;
         } 
