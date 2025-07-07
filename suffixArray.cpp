@@ -1,26 +1,26 @@
-// C++ Program to illustrate how to create the
-// suffix array
 #include <iostream>
-#include <vector>
-#include <algorithm>
 #include <fstream>
 #include <sstream>
 #include <chrono>
+#include <vector>
+#include <map>
+#include <algorithm>
+#include <dirent.h>
 using namespace std;
+#define NO_OF_CHARS 256
 #include "toString.cpp"
+#include "getName.cpp"
 
-vector<int> buildSufArr(string &s) {
+vector<int> buildSufArr(const string &s) {
     int n = s.length();
     vector<int> sufArr(n);
 
-    // Generating all the suffixes
-    for (int i = 0; i < n; i++){
+    for (int i = 0; i < n; i++) {
         sufArr[i] = i;
     }
 
-    // Sort all suffixes alphabetically
     sort(sufArr.begin(), sufArr.end(), [&](int a, int b) {
-        return s.substr(a) < s.substr(b); // aún se puede optimizar más
+        return s.substr(a) < s.substr(b);
     });
     return sufArr;
 }
@@ -39,7 +39,6 @@ int findLowerBound(const string &text, const vector<int> &sufArr, const string &
     return low;
 }
 
-// Búsqueda binaria para encontrar el primer sufijo > patrón
 int findUpperBound(const string &text, const vector<int> &sufArr, const string &pattern) {
     int low = 0, high = sufArr.size();
     while (low < high) {
@@ -54,42 +53,126 @@ int findUpperBound(const string &text, const vector<int> &sufArr, const string &
     return low;
 }
 
-// Cuenta cuántas veces aparece el patrón en el texto
 int countPatternOccurrences(const string &text, const vector<int> &sufArr, const string &pattern) {
     int lower = findLowerBound(text, sufArr, pattern);
     int upper = findUpperBound(text, sufArr, pattern);
     return upper - lower;
 }
 
+/*vector<string> split(const string &s, char delimiter) {
+    vector<string> tokens;
+    string token;
+    istringstream tokenStream(s);
+    while (getline(tokenStream, token, delimiter)) {
+        tokens.push_back(token);
+    }
+    return tokens;
+}*/
+
 int main(int argc, char* argv[]) {
-    if (argc < 2) {
-        cerr << "Uso: " << argv[0] << " <archivo1> [archivo2] ...\n";
+    if (argc < 4) {
+        cerr << "Uso: " << argv[0] << " <carpeta> <n> <archivo_patrones>\n";
         return 0;
     }
 
-    // Concatenar el contenido de todos los archivos
-    stringstream buffer;
-    for (int i = 1; i < argc; ++i) {
-        ifstream file(argv[i]);
-        if (!file.is_open()) {
-            cerr << "No se pudo abrir el archivo: " << argv[i] << endl;
-            return 1;
+    string carpeta = argv[1];
+    int n = stoi(argv[2]);
+    string archivoPatrones = argv[3];
+    string separador = "\x7F";
+    vector<string> archivos;
+
+    // Leer solo los primeros n archivos de la carpeta usando dirent
+    DIR* dir;
+    struct dirent* ent;
+    int count = 0;
+    if ((dir = opendir(carpeta.c_str())) != NULL) {
+        while ((ent = readdir(dir)) != NULL) {
+            string nombre = ent->d_name;
+            if (nombre != "." && nombre != "..") {
+                string ruta = carpeta + "/" + nombre;
+                ifstream file(ruta);
+                if (file.is_open()) {
+                    archivos.push_back(ruta);
+                    count++;
+                    if (count >= n) break;
+                }
+            }
         }
-        buffer << file.rdbuf();
-        file.close();
+        closedir(dir);
+    } else {
+        cerr << "No se pudo abrir la carpeta: " << carpeta << endl;
+        return 1;
     }
-    string s = buffer.str();
-    vector<int> sufArr = buildSufArr(s);
 
-    string pat = "This";
+    // Concatenar archivos usando toString
+    vector<const char*> archivos_cstr;
+    for (const auto& archivo : archivos) {
+        archivos_cstr.push_back(archivo.c_str());
+    }
+    string textoDondeBuscar = toString(archivos_cstr.size(), archivos_cstr.data(), separador);
+    cout << "Texto concatenado tiene " << textoDondeBuscar.size() << " caracteres." << endl;
 
-    auto start = chrono::high_resolution_clock::now();
-    int count = countPatternOccurrences(s, sufArr, pat);
-    auto end = chrono::high_resolution_clock::now();
+    // Construir el Suffix Array
+    vector<int> sufArr = buildSufArr(textoDondeBuscar);
 
-    double running_time = chrono::duration<double>(end - start).count();
+    // Almacenar patrones a buscar en un vector
+    vector<string> patrones;
+    ifstream filePatrones(archivoPatrones);
+    if (!filePatrones.is_open()) {
+        cerr << "No se pudo abrir el archivo " << archivoPatrones << endl;
+        return 1;
+    }
+    string linea;
+    while (getline(filePatrones, linea)) {
+        if (!linea.empty())
+            patrones.push_back(linea);
+    }
+    filePatrones.close();
 
-    cout << "El patron \"" << pat << "\" aparece " << count << " veces en el texto, en: " << running_time << " segundos." << endl;
+    cout << "Buscando patrones..." << endl;
 
+    // Precomputar mapeo de posición a sección
+    vector<int> pos_to_section(textoDondeBuscar.size(), 1);
+    int current_section = 1;
+    for (size_t i = 0; i < textoDondeBuscar.size(); i++) {
+        if (textoDondeBuscar[i] == separador[0]) {
+            current_section++;
+        }
+        pos_to_section[i] = current_section;
+    }
+
+    for (const auto& patron : patrones) {
+        auto start = chrono::high_resolution_clock::now();
+        
+        // Buscar todas las ocurrencias del patrón
+        int lower = findLowerBound(textoDondeBuscar, sufArr, patron);
+        int upper = findUpperBound(textoDondeBuscar, sufArr, patron);
+        int total_occurrences = upper - lower;
+
+        // Contar ocurrencias por sección
+        map<int, int> section_counts;
+        for (int i = lower; i < upper; i++) {
+            int pos = sufArr[i];
+            int section = pos_to_section[pos];
+            section_counts[section]++;
+        }
+
+        auto end = chrono::high_resolution_clock::now();
+        double running_time = chrono::duration<double>(end - start).count();
+
+        // Mostrar resultados por archivo
+        for (const auto& pair : section_counts) {
+            int idx = pair.first - 1;
+            if (idx >= 0 && idx < archivos.size()) {
+                vector<string> parts = split(archivos[idx], '\\');
+                cout << "Texto " << parts.back() << ", Patron: " << patron 
+                     << ": " << pair.second << " occurrence(s) en " 
+                     << running_time << " segundos." << endl;
+            } else {
+                cerr << "[WARN] Índice fuera de rango en archivos: " 
+                     << pair.first << " (idx=" << idx << ")" << endl;
+            }
+        }
+    }
     return 0;
 }
