@@ -56,14 +56,30 @@ void search(string txt, string pat, map<int, int>& section_counts) {
     while (s <= (n - m)) {
         int j = m - 1;
 
-        while (j >= 0 && pat[j] == txt[s + j])
+        while (j >= 0 && (s + j) < n && pat[j] == txt[s + j])
             j--;
 
         if (j < 0) {
-            int section = position_to_section[s];
-            section_counts[section]++; // Increment count for this section
+            if (s >= 0 && s < position_to_section.size()) {
+                int section = position_to_section[s];
+                if (section >= 1 && section <= current_section) {
+                        section_counts[section]++;
+                }
+                else{
+                        cerr << "[WARN] Sección inválida: " << section
+                            << " en posición s=" << s << endl;
+                    }
+            } else 
+            {
+                cerr << "[WARN] Posición s fuera de rango: s=" << s << endl;
+            }
 
-            s += (s + m < n) ? m - badchar[txt[s + m]] : 1;
+            if ((s + m) < n) {
+                s += max(1, m - badchar[txt[s + m]]);
+            } 
+            else {
+                s++;
+            }
         }
         else {
             s += max(1, j - badchar[txt[s + j]]);
@@ -141,9 +157,20 @@ if ((dir = opendir(carpeta.c_str())) != NULL) {
 
         double running_time = chrono::duration<double>(end - start).count();
         for (const auto& pair : section_counts) {
-            vector<string> parts = split(archivos[pair.first - 1], '/');
-            cout << "Texto " << parts.back() << ", Patron: " << patron << ": " << pair.second << " occurrence(s)" << " en " << running_time << " segundos." << endl;
+        int idx = pair.first - 1;
+
+        // Validar índice antes de usarlo
+        if (idx >= 0 && idx < archivos.size()) {
+            vector<string> parts = split(archivos[idx], '\\');
+            cout << "Texto " << parts.back()<< ", Patron: " << patron<< ": " << pair.second<< " occurrence(s)"<< " en " << running_time << " segundos." << endl;
+        } 
+        else {
+            cerr << "[WARN] Índice fuera de rango en archivos: "<< pair.first << " (idx=" << idx << ")" << endl;
         }
-    }
+}
+
+
+        
+}
     return 0;
 }
