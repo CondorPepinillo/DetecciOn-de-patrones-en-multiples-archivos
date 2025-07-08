@@ -44,7 +44,7 @@ public:
         vector<int> position_to_section(n);
 
         // Precompute mapping de posiciones a secciones
-        for (int i = 0; i < n-1; i++) {
+        for (int i = 0; i < n; i++) {
             if (txt[i] == separator) {
                 current_section++;
             }

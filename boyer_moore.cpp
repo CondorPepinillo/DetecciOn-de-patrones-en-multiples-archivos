@@ -40,7 +40,7 @@ void search(string txt, string pat, map<int, int>& section_counts) {
     vector<int> position_to_section(n);
 
     // Precompute section mapping
-    for (int i = 0; i < n-1; i++) {
+    for (int i = 0; i < n; i++) {
         if (txt[i] == '\x7F') {
             current_section++;
         }

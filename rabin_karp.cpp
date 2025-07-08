@@ -25,7 +25,7 @@ public:
         // Map position to section
         int current_section = 1;
         vector<int> position_to_section(N);
-        for (int i = 0; i < N - 1; i++) {
+        for (int i = 0; i < N; i++) {
             if (txt[i] == separator) {
                 current_section++;
             }
