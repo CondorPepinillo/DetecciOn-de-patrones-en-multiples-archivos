@@ -129,7 +129,7 @@ if ((dir = opendir(carpeta.c_str())) != NULL) {
         archivos_cstr.push_back(archivo.c_str());
     }
     string textoDondeBuscar = toString(archivos_cstr.size(), archivos_cstr.data(), separador);
-    cout << "Texto concatenado tiene " << textoDondeBuscar.size() << " caracteres." << endl;
+    //cout << "Texto concatenado tiene " << textoDondeBuscar.size() << " caracteres." << endl;
 
     //Almacenar patrones a buscar en un vector
     vector<string> patrones;
@@ -146,7 +146,7 @@ if ((dir = opendir(carpeta.c_str())) != NULL) {
     filePatrones.close();
 
     BoyerMoore bm;
-    cout << "Buscando patrones..." << endl;
+    //cout << "Buscando patrones..." << endl;
 
     for (const auto& patron : patrones) {
         map<int, int> section_counts;
@@ -163,7 +163,7 @@ if ((dir = opendir(carpeta.c_str())) != NULL) {
             //podria ser necesario cambiar el separador dependiendo de la plataforma
             //en windows es '\\' y en linux es '/'
             vector<string> parts = split(archivos[idx], '\\');
-            cout << "Texto " << parts.back()<< ", Patron: " << patron<< ": " << pair.second<< " occurrence(s)"<< " en " << running_time << " segundos." << endl;
+            cout << parts.back()<<";" << patron<<";" << pair.second<<";" << running_time <<";"<< endl;
         } 
         else {
             cerr << "[WARN] Índice fuera de rango en archivos: "<< pair.first << " (idx=" << idx << ")" << endl;
