@@ -229,11 +229,8 @@ for (const auto& patron : patrones) {
     for (int idx = 0; idx < archivos.size(); ++idx) {
         int ocurrencias = section_counts.count(idx) ? section_counts[idx] : 0;
         vector<string> parts = split(archivos[idx], '\\');
-        cout << "Texto " << parts.back()
-             << ", Patron: " << patron
-             << ": " << ocurrencias
-             << " occurrence(s) en " << running_time << " segundos." << endl;
-    }
+        cout << parts.back()<<";" << patron<<";" << pair.second<<";" << running_time <<";"<< endl;
+}
 }
     return 0;
 }

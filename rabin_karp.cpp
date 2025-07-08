@@ -150,10 +150,7 @@ int main(int argc, char* argv[]) {
 
             if (idx >= 0 && idx < archivos.size()) {
                 vector<string> parts = split(archivos[idx], '\\'); // o "\\" en Windows
-                cout << "Texto " << parts.back()
-                     << ", Patron: \"" << patron
-                     << " : " << pair.second
-                     << " occurrence(s) en " << running_time << " segundos." << endl;
+                cout << parts.back()<<";" << patron<<";" << pair.second<<";" << running_time <<";"<< endl;
             }
         }
     }

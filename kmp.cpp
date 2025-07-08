@@ -160,10 +160,7 @@ int main(int argc, char *argv[]) {
             // Validar índice antes de usarlo
             if (idx >= 0 && idx < archivos.size()) {
                 vector<string> parts = split(archivos[idx], '\\'); // compatible UNIX
-                cout << "Texto " << parts.back()
-                     << ", Patron: \"" << patron
-                     << ":" << pair.second
-                     << " occurrence(s) en " << running_time << " segundos." << endl;
+                cout << parts.back()<<";" << patron<<";" << pair.second<<";" << running_time <<";"<< endl;
             } else {
                 cerr << "[WARN] Índice fuera de rango en archivos: " << pair.first << " (idx=" << idx << ")" << endl;
             }
